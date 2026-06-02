@@ -64,6 +64,10 @@ python3 -m http.server 4178
 ## Deploy
 
 Deploys to Vercel as a static site with zero config (`vercel.json` included).
+The repo is connected to the Vercel project, so every push to `master`
+auto-deploys to production.
+
+Live: https://ad-economics-calculator.vercel.app
 
 ## Files
 
