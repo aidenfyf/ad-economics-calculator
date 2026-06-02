@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growth Constraint Modeler — AI Agency Ad Economics</title>
+  <meta name="description" content="Move the sliders to find the constraint holding back profitable growth. Live unit-economics model for AI agencies scaling with paid ads." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <!-- ============ LEFT: SLIDER PANEL ============ -->
+    <aside class="panel sliders-panel">
+      <header class="panel-head">
+        <span class="panel-icon">🎚️</span>
+        <h1>Adjust Metrics</h1>
+      </header>
+
+      <div class="slider-list" id="sliderList">
+        <!-- sliders injected by app.js -->
+      </div>
+
+      <div class="offer-block">
+        <div class="offer-head">Offer &amp; Target</div>
+        <div class="offer-grid">
+          <label class="offer-field">
+            <span>Monthly price ($)</span>
+            <input type="number" id="priceInput" min="100" step="50" value="3499" />
+          </label>
+          <label class="offer-field">
+            <span>Min term (months)</span>
+            <input type="number" id="minTermInput" min="1" step="1" value="3" />
+          </label>
+          <label class="offer-field">
+            <span>Target LGP:CAC</span>
+            <input type="number" id="targetRatioInput" min="1" step="0.5" value="10" />
+          </label>
+        </div>
+      </div>
+
+      <button class="reset-btn" id="resetBtn">↺ Reset to baseline</button>
+    </aside>
+
+    <!-- ============ RIGHT: RESULTS ============ -->
+    <section class="results">
+      <div class="status-bar" id="statusBar">
+        <span class="status-icon">📈</span>
+        <span id="statusText">At baseline — adjust sliders to model scenarios</span>
+      </div>
+
+      <!-- Calculated Economics -->
+      <div class="card">
+        <header class="card-head">
+          <span class="card-icon econ">$</span>
+          <h2>Calculated Economics</h2>
+        </header>
+        <div class="metric-grid">
+          <div class="metric"><span class="m-label">CAC</span><span class="m-value" id="cac">—</span></div>
+          <div class="metric highlight"><span class="m-label">LGP:CAC</span><span class="m-value accent" id="lgpCac">—</span></div>
+          <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
+          <div class="metric"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span></div>
+          <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
+          <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
+          <div class="metric"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
+          <div class="metric"><span class="m-label">Profit Margin</span><span class="m-value" id="profitMargin">—</span></div>
+        </div>
+      </div>
+
+      <!-- Monthly Revenue Projection -->
+      <div class="card">
+        <header class="card-head">
+          <span class="card-icon proj">📊</span>
+          <h2>Monthly Revenue Projection</h2>
+          <span class="card-tag" id="callsTag">30 booked calls/mo</span>
+        </header>
+        <div class="metric-grid">
+          <div class="metric"><span class="m-label">New Clients Won</span><span class="m-value" id="newClients">—</span><span class="m-sub">per month</span></div>
+          <div class="metric"><span class="m-label">Total Ad Spend</span><span class="m-value" id="adSpend">—</span><span class="m-sub">per month</span></div>
+          <div class="metric"><span class="m-label">Monthly Revenue</span><span class="m-value pos" id="monthlyRevenue">—</span><span class="m-sub">from new clients</span></div>
+          <div class="metric"><span class="m-label">Monthly COGS</span><span class="m-value" id="monthlyCogs">—</span><span class="m-sub">delivery costs</span></div>
+          <div class="metric profit-tile" id="netProfitTile"><span class="m-label">Monthly Net Profit</span><span class="m-value" id="netProfit">—</span><span class="m-sub">revenue − COGS − ad spend</span></div>
+          <div class="metric roas-tile"><span class="m-label">Monthly ROAS</span><span class="m-value accent" id="monthlyRoas">—</span><span class="m-sub">revenue ÷ ad spend</span></div>
+        </div>
+      </div>
+
+      <!-- Recommended Price Point -->
+      <div class="card rec-card">
+        <header class="card-head">
+          <span class="card-icon rec">📈</span>
+          <h2>Recommended Price Point</h2>
+        </header>
+        <p class="rec-desc">Minimum monthly price to achieve a <strong id="targetLabel">10:1</strong> LGP:CAC ratio at current slider values:</p>
+        <div class="rec-price"><span id="recPrice">$4,430</span><span class="rec-unit">/month</span></div>
+        <p class="rec-current">Current price: <strong id="currentPriceLabel">$3,499/mo (3-month min)</strong> <span class="rec-flag" id="recFlag">— Consider raising price or improving metrics</span></p>
+      </div>
+
+      <footer class="app-footer">
+        <span>Move a single slider to isolate the constraint. The metric that swings net profit hardest is the one to solve for first.</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
