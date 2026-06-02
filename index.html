@@ -3,127 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Growth Constraint Modeler — AI Agency Ad Economics</title>
-  <meta name="description" content="Move the sliders to find the constraint holding back profitable growth. Live unit-economics model for AI agencies scaling with paid ads." />
+  <title>Ad Constraint Calculator</title>
+  <meta name="description" content="Find the one metric capping your profitable growth before you spend another dollar on ads. A live unit-economics model for agencies scaling with paid acquisition." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <!-- ============ LEFT: SLIDER PANEL ============ -->
-    <aside class="panel sliders-panel">
-      <header class="panel-head">
-        <span class="panel-icon">🎚️</span>
-        <h1>Adjust Metrics</h1>
+  <div class="page">
+    <!-- ============ HERO ============ -->
+    <header class="hero">
+      <h1>Ad Constraint Calculator</h1>
+      <p class="hero-sub">Find the one metric capping your profitable growth before you spend another dollar on ads.</p>
+    </header>
+
+    <!-- ============ INSTRUCTIONS (first thing a visitor reads) ============ -->
+    <section class="card howto-card">
+      <header class="card-head">
+        <span class="card-icon how">🧭</span>
+        <h2>How to use this</h2>
       </header>
+      <ol class="howto-list">
+        <li><strong>Set your numbers.</strong> Fill in the Offer &amp; Target fields, then drag each slider to match your agency’s real funnel. Nothing here is assumed; the model only knows what you tell it.</li>
+        <li><strong>Watch Monthly Net Profit.</strong> If it shows red, your ads win clients but the unit economics don’t pay yet. A constraint is capping you.</li>
+        <li><strong>Spot the amber sliders.</strong> A slider turns green once it hits a healthy target (Show ≥ 70%, Close ≥ 18%, Churn ≤ 10%, CPQBC ≤ $350, Calls &gt; 30). The amber ones are your suspects.</li>
+        <li><strong>Solve one at a time.</strong> Move a single amber slider into its green zone. Whichever one flips net profit positive, or moves it the most, is the constraint to fix first.</li>
+        <li><strong>Check the price.</strong> The Recommended Price Point shows the monthly price you’d need to hit your target LGP:CAC at your current numbers.</li>
+      </ol>
+    </section>
 
-      <div class="slider-list" id="sliderList">
-        <!-- sliders injected by app.js -->
-      </div>
-
-      <div class="offer-block">
-        <div class="offer-head">Offer &amp; Target</div>
+    <!-- ============ CALCULATOR ============ -->
+    <main class="app">
+      <!-- LEFT: controls -->
+      <aside class="panel controls-panel">
+        <!-- Offer & Target FIRST -->
+        <header class="panel-head">
+          <span class="panel-icon">🎯</span>
+          <h3>Offer &amp; Target</h3>
+        </header>
+        <p class="panel-hint">Start here. Enter your offer and the LGP:CAC ratio you’re aiming for.</p>
         <div class="offer-grid">
           <label class="offer-field">
             <span>Monthly price ($)</span>
-            <input type="number" id="priceInput" min="100" step="50" value="3499" />
+            <input type="number" id="priceInput" min="100" step="50" />
           </label>
           <label class="offer-field">
             <span>Min term (months)</span>
-            <input type="number" id="minTermInput" min="1" step="1" value="3" />
+            <input type="number" id="minTermInput" min="1" step="1" />
           </label>
           <label class="offer-field">
             <span>Target LGP:CAC</span>
-            <input type="number" id="targetRatioInput" min="1" step="0.5" value="10" />
+            <input type="number" id="targetRatioInput" min="1" step="0.5" />
           </label>
         </div>
-      </div>
 
-      <div class="panel-actions">
-        <button class="btn btn-primary" id="saveBaselineBtn">📌 Save these as my baseline</button>
-        <div class="btn-row">
-          <button class="btn" id="resetBtn">↺ Reset to baseline</button>
-          <button class="btn" id="shareBtn">🔗 Copy share link</button>
+        <!-- Adjust Metrics SECOND -->
+        <header class="panel-head section-gap">
+          <span class="panel-icon">🎚️</span>
+          <h3>Adjust Metrics</h3>
+        </header>
+        <p class="panel-hint">Drag each slider to your real funnel numbers. They glow green when they hit a healthy target.</p>
+        <div class="slider-list" id="sliderList">
+          <!-- sliders injected by app.js -->
         </div>
-        <button class="btn btn-ghost" id="defaultsBtn">Restore demo defaults</button>
-      </div>
-    </aside>
 
-    <!-- ============ RIGHT: RESULTS ============ -->
-    <section class="results">
-      <!-- How to use -->
-      <div class="card howto-card">
-        <header class="card-head">
-          <span class="card-icon how">🧭</span>
-          <h2>How to find your growth constraint</h2>
-        </header>
-        <ol class="howto-list">
-          <li><strong>Enter your real numbers.</strong> Set each slider to your current funnel metrics, then hit <em>“Save these as my baseline.”</em></li>
-          <li><strong>Watch Monthly Net Profit.</strong> If it’s red, an ad gets you a client but the unit economics don’t pay — something upstream is the constraint.</li>
-          <li><strong>Find the amber sliders.</strong> A slider glows <span class="ink-pos">green</span> when it hits a healthy target (Show ≥ 70%, Close ≥ 18%, Churn ≤ 10%, CPQBC ≤ $350, Calls &gt; 30). The ones still <span class="ink-acc">amber</span> are your candidates.</li>
-          <li><strong>Solve one at a time.</strong> Drag a single amber slider into its green zone. The one that flips net profit positive — or moves it most — is the constraint to fix first.</li>
-          <li><strong>Check the price.</strong> The <span class="ink-acc">Recommended Price Point</span> shows the monthly price needed to hit your target LGP:CAC at today’s numbers.</li>
-        </ol>
-      </div>
-
-      <div class="status-bar" id="statusBar">
-        <span class="status-icon">📈</span>
-        <span id="statusText">At baseline — adjust sliders to model scenarios</span>
-      </div>
-
-      <!-- Calculated Economics -->
-      <div class="card">
-        <header class="card-head">
-          <span class="card-icon econ">$</span>
-          <h2>Calculated Economics</h2>
-        </header>
-        <div class="metric-grid">
-          <div class="metric"><span class="m-label">CAC</span><span class="m-value" id="cac">—</span></div>
-          <div class="metric highlight"><span class="m-label">LGP:CAC</span><span class="m-value accent" id="lgpCac">—</span></div>
-          <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
-          <div class="metric"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span></div>
-          <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
-          <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
-          <div class="metric"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
-          <div class="metric"><span class="m-label">Profit Margin</span><span class="m-value" id="profitMargin">—</span></div>
+        <div class="panel-actions">
+          <div class="btn-row">
+            <button class="btn" id="resetBtn">↺ Reset</button>
+            <button class="btn" id="shareBtn">🔗 Copy share link</button>
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <!-- Monthly Revenue Projection -->
-      <div class="card">
-        <header class="card-head">
-          <span class="card-icon proj">📊</span>
-          <h2>Monthly Revenue Projection</h2>
-          <span class="card-tag" id="callsTag">30 booked calls/mo</span>
-        </header>
-        <div class="metric-grid">
-          <div class="metric"><span class="m-label">New Clients Won</span><span class="m-value" id="newClients">—</span><span class="m-sub">per month</span></div>
-          <div class="metric"><span class="m-label">Total Ad Spend</span><span class="m-value" id="adSpend">—</span><span class="m-sub">per month</span></div>
-          <div class="metric"><span class="m-label">Monthly Revenue</span><span class="m-value pos" id="monthlyRevenue">—</span><span class="m-sub">from new clients</span></div>
-          <div class="metric"><span class="m-label">Monthly COGS</span><span class="m-value" id="monthlyCogs">—</span><span class="m-sub">delivery costs</span></div>
-          <div class="metric profit-tile" id="netProfitTile"><span class="m-label">Monthly Net Profit</span><span class="m-value" id="netProfit">—</span><span class="m-sub">revenue − COGS − ad spend</span></div>
-          <div class="metric roas-tile"><span class="m-label">Monthly ROAS</span><span class="m-value accent" id="monthlyRoas">—</span><span class="m-sub">revenue ÷ ad spend</span></div>
+      <!-- RIGHT: results -->
+      <section class="results">
+        <!-- Calculated Economics -->
+        <div class="card">
+          <header class="card-head">
+            <span class="card-icon econ">$</span>
+            <h2>Calculated Economics</h2>
+          </header>
+          <div class="metric-grid">
+            <div class="metric"><span class="m-label">CAC</span><span class="m-value" id="cac">—</span></div>
+            <div class="metric highlight"><span class="m-label">LGP:CAC</span><span class="m-value accent" id="lgpCac">—</span></div>
+            <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
+            <div class="metric"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span></div>
+            <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
+            <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
+            <div class="metric"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
+            <div class="metric"><span class="m-label">Profit Margin</span><span class="m-value" id="profitMargin">—</span></div>
+          </div>
         </div>
-      </div>
 
-      <!-- Recommended Price Point -->
-      <div class="card rec-card">
-        <header class="card-head">
-          <span class="card-icon rec">📈</span>
-          <h2>Recommended Price Point</h2>
-        </header>
-        <p class="rec-desc">Minimum monthly price to achieve a <strong id="targetLabel">10:1</strong> LGP:CAC ratio at current slider values:</p>
-        <div class="rec-price"><span id="recPrice">$4,430</span><span class="rec-unit">/month</span></div>
-        <p class="rec-current">Current price: <strong id="currentPriceLabel">$3,499/mo (3-month min)</strong> <span class="rec-flag" id="recFlag">— Consider raising price or improving metrics</span></p>
-      </div>
+        <!-- Monthly Revenue Projection -->
+        <div class="card">
+          <header class="card-head">
+            <span class="card-icon proj">📊</span>
+            <h2>Monthly Revenue Projection</h2>
+            <span class="card-tag" id="callsTag">booked calls/mo</span>
+          </header>
+          <div class="metric-grid">
+            <div class="metric"><span class="m-label">New Clients Won</span><span class="m-value" id="newClients">—</span><span class="m-sub">per month</span></div>
+            <div class="metric"><span class="m-label">Total Ad Spend</span><span class="m-value" id="adSpend">—</span><span class="m-sub">per month</span></div>
+            <div class="metric"><span class="m-label">Monthly Revenue</span><span class="m-value pos" id="monthlyRevenue">—</span><span class="m-sub">from new clients</span></div>
+            <div class="metric"><span class="m-label">Monthly COGS</span><span class="m-value" id="monthlyCogs">—</span><span class="m-sub">delivery costs</span></div>
+            <div class="metric profit-tile" id="netProfitTile"><span class="m-label">Monthly Net Profit</span><span class="m-value" id="netProfit">—</span><span class="m-sub">revenue minus COGS minus ad spend</span></div>
+            <div class="metric roas-tile"><span class="m-label">Monthly ROAS</span><span class="m-value accent" id="monthlyRoas">—</span><span class="m-sub">revenue divided by ad spend</span></div>
+          </div>
+        </div>
 
-      <footer class="app-footer">
-        <span>Move a single slider to isolate the constraint. The metric that swings net profit hardest is the one to solve for first.</span>
-      </footer>
-    </section>
-  </main>
+        <!-- Recommended Price Point -->
+        <div class="card rec-card">
+          <header class="card-head">
+            <span class="card-icon rec">📈</span>
+            <h2>Recommended Price Point</h2>
+          </header>
+          <p class="rec-desc">Minimum monthly price to achieve a <strong id="targetLabel">10:1</strong> LGP:CAC ratio at your current slider values:</p>
+          <div class="rec-price"><span id="recPrice">—</span><span class="rec-unit">/month</span></div>
+          <p class="rec-current">Your price: <strong id="currentPriceLabel">—</strong> <span class="rec-flag" id="recFlag"></span></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Move a single slider to isolate the constraint. The metric that swings net profit hardest is the one to solve for first.</span>
+    </footer>
+  </div>
 
   <div class="toast" id="toast"></div>
   <script src="app.js"></script>

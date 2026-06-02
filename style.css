@@ -41,14 +41,38 @@ body {
   min-height: 100vh;
 }
 
+/* page wrapper: caps width so the layout never stretches edge-to-edge */
+.page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 22px 28px;
+}
+
+/* ---------------- HERO ---------------- */
+.hero {
+  text-align: center;
+  padding: 56px 0 32px;
+}
+.hero h1 {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+.hero-sub {
+  margin: 12px auto 0;
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
 .app {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 22px;
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 22px;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
   align-items: start;
+  margin-top: 18px;
 }
 
 /* ---------------- PANELS / CARDS ---------------- */
@@ -58,9 +82,7 @@ body {
   border-radius: var(--radius);
 }
 
-.sliders-panel {
-  position: sticky;
-  top: 22px;
+.controls-panel {
   padding: 22px 20px;
   background: var(--panel);
 }
@@ -69,14 +91,26 @@ body {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 .card-head { margin-bottom: 18px; }
 
-.panel-head h1, .card-head h2 {
+.panel-head h1, .panel-head h3, .card-head h2 {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.2px;
+}
+
+.panel-hint {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+}
+.section-gap {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border-soft);
 }
 
 .panel-icon, .card-icon {
@@ -431,11 +465,13 @@ input[type="range"]::-moz-range-thumb {
 /* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 880px) {
   .app { grid-template-columns: 1fr; }
-  .sliders-panel { position: static; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 40px 0 24px; }
+  .hero h1 { font-size: 28px; }
 }
 @media (max-width: 520px) {
-  .app { padding: 14px; gap: 16px; }
+  .page { padding: 0 14px 20px; }
+  .app { gap: 16px; }
   .metric-grid { grid-template-columns: 1fr; }
   .rec-price #recPrice { font-size: 32px; }
 }
