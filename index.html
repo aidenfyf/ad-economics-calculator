@@ -18,7 +18,7 @@
       <p class="hero-sub">Find the one metric capping your profitable growth before you spend another dollar on ads.</p>
     </header>
 
-    <!-- ============ INSTRUCTIONS (first thing a visitor reads) ============ -->
+    <!-- ============ INSTRUCTIONS ============ -->
     <section class="card howto-card">
       <header class="card-head">
         <span class="card-icon how">🧭</span>
@@ -26,10 +26,10 @@
       </header>
       <ol class="howto-list">
         <li><strong>Set your numbers.</strong> Fill in the Offer &amp; Target fields, then drag each slider to match your agency’s real funnel. Nothing here is assumed; the model only knows what you tell it.</li>
-        <li><strong>Watch Monthly Net Profit.</strong> If it shows red, your ads win clients but the unit economics don’t pay yet. A constraint is capping you.</li>
-        <li><strong>Spot the amber sliders.</strong> A slider turns green once it hits a healthy target (Show ≥ 70%, Close ≥ 18%, Churn ≤ 10%, CPQBC ≤ $350, Calls &gt; 30). The amber ones are your suspects.</li>
-        <li><strong>Solve one at a time.</strong> Move a single amber slider into its green zone. Whichever one flips net profit positive, or moves it the most, is the constraint to fix first.</li>
-        <li><strong>Check the price.</strong> The Recommended Price Point shows the monthly price you’d need to hit your target LGP:CAC at your current numbers.</li>
+        <li><strong>Read the diagnosis.</strong> The model finds your single biggest constraint, the one lever that lifts your Lifetime Gross Profit to CAC ratio the most.</li>
+        <li><strong>Watch the math.</strong> LGP:CAC is the one metric that matters. Below 10:1 is low for agency offers, 10:1 is healthy, 20:1+ means you can scale spend.</li>
+        <li><strong>Solve one lever at a time.</strong> Fix the binding constraint, then chase the next biggest one. There is always a next constraint, even when you are profitable.</li>
+        <li><strong>Use the deep dive.</strong> Scenarios rank every lever, Action Plan gives you the play, and Formula shows the math behind each number.</li>
       </ol>
     </section>
 
@@ -37,20 +37,23 @@
     <main class="app">
       <!-- LEFT: controls -->
       <aside class="panel controls-panel">
-        <!-- Offer & Target FIRST -->
         <header class="panel-head">
           <span class="panel-icon">🎯</span>
           <h3>Offer &amp; Target</h3>
         </header>
-        <p class="panel-hint">Start here. Enter your offer and the LGP:CAC ratio you’re aiming for.</p>
+        <p class="panel-hint">Start here. Enter your offer, how you collect cash, and the LGP:CAC ratio you’re aiming for.</p>
         <div class="offer-grid">
           <label class="offer-field">
             <span>Monthly price ($)</span>
             <input type="number" id="priceInput" min="100" step="50" />
           </label>
           <label class="offer-field">
-            <span>Min term (months)</span>
+            <span>Contract length (months)</span>
             <input type="number" id="minTermInput" min="1" step="1" />
+          </label>
+          <label class="offer-field">
+            <span>Upfront cash collected (% of contract)</span>
+            <input type="number" id="upfrontInput" min="1" max="100" step="5" />
           </label>
           <label class="offer-field">
             <span>Target LGP:CAC</span>
@@ -58,15 +61,12 @@
           </label>
         </div>
 
-        <!-- Adjust Metrics SECOND -->
         <header class="panel-head section-gap">
           <span class="panel-icon">🎚️</span>
           <h3>Adjust Metrics</h3>
         </header>
         <p class="panel-hint">Drag each slider to your real funnel numbers. They glow green when they hit a healthy target.</p>
-        <div class="slider-list" id="sliderList">
-          <!-- sliders injected by app.js -->
-        </div>
+        <div class="slider-list" id="sliderList"></div>
 
         <div class="panel-actions">
           <div class="btn-row">
@@ -78,6 +78,17 @@
 
       <!-- RIGHT: results -->
       <section class="results">
+
+        <!-- DIAGNOSIS -->
+        <div class="card diagnosis-card" id="diagnosisCard">
+          <div class="diag-head">
+            <span class="diag-eyebrow" id="diagEyebrow">Your biggest constraint</span>
+            <span class="diag-name" id="diagName">—</span>
+          </div>
+          <p class="diag-bottleneck" id="diagBottleneck">—</p>
+          <div class="diag-impact" id="diagImpact"></div>
+        </div>
+
         <!-- Calculated Economics -->
         <div class="card">
           <header class="card-head">
@@ -88,7 +99,7 @@
             <div class="metric"><span class="m-label">CAC</span><span class="m-value" id="cac">—</span></div>
             <div class="metric highlight"><span class="m-label">LGP:CAC</span><span class="m-value accent" id="lgpCac">—</span></div>
             <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
-            <div class="metric"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span></div>
+            <div class="metric" id="cashRoasTile"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span><span class="m-sub">target 2x · AOV ÷ CAC</span></div>
             <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
             <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
             <div class="metric"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
@@ -113,6 +124,33 @@
           </div>
         </div>
 
+        <!-- DEEP DIVE -->
+        <div class="card deep-dive">
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-tab="scenarios">📈 Scenarios</button>
+            <button class="tab" data-tab="action">🛠 Action Plan</button>
+            <button class="tab" data-tab="formula">🧮 Formula</button>
+          </div>
+
+          <div class="tab-panel active" id="panel-scenarios">
+            <p class="panel-intro">Each row moves <em>one</em> lever to its target, holding everything else fixed. The biggest LGP:CAC lift is your constraint. Whichever you fix, then chase the next.</p>
+            <div class="scenario-table" id="scenarioTable"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-action">
+            <div class="action-head">
+              <span class="action-eyebrow">The play for</span>
+              <span class="action-name" id="actionName">—</span>
+            </div>
+            <div class="action-steps" id="actionSteps"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-formula">
+            <p class="panel-intro">Every number above is derived from your inputs. No magic.</p>
+            <div class="formula-list" id="formulaList"></div>
+          </div>
+        </div>
+
         <!-- Recommended Price Point -->
         <div class="card rec-card">
           <header class="card-head">
@@ -123,11 +161,12 @@
           <div class="rec-price"><span id="recPrice">—</span><span class="rec-unit">/month</span></div>
           <p class="rec-current">Your price: <strong id="currentPriceLabel">—</strong> <span class="rec-flag" id="recFlag"></span></p>
         </div>
+
       </section>
     </main>
 
     <footer class="app-footer">
-      <span>Move a single slider to isolate the constraint. The metric that swings net profit hardest is the one to solve for first.</span>
+      <span>One metric matters: Lifetime Gross Profit to CAC. Six levers move it. Fix the biggest constraint, then chase the next.</span>
     </footer>
   </div>
 
