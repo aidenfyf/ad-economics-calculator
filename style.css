@@ -139,6 +139,23 @@ body {
   font-size: 14px;
 }
 .slider-value.changed { color: var(--accent); }
+.slider-value.good { color: var(--pos); }
+
+.slider-goal {
+  font-size: 10px;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: -3px;
+}
+.slider-goal::before {
+  content: "○";
+  font-size: 9px;
+  color: var(--text-faint);
+}
+.slider-goal.met { color: var(--pos); }
+.slider-goal.met::before { content: "✓"; color: var(--pos); }
 
 /* custom range track */
 .range-wrap { position: relative; height: 18px; display: flex; align-items: center; }
@@ -154,9 +171,10 @@ input[type="range"] {
   position: relative;
   z-index: 2;
 }
-/* filled portion via gradient set in JS through --fill */
+/* filled portion via gradient; --fill = %, --fill-color = amber or green */
 input[type="range"] {
-  background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--fill, 0%), var(--track) var(--fill, 0%), var(--track) 100%);
+  --fill-color: var(--accent);
+  background: linear-gradient(to right, var(--fill-color) 0%, var(--fill-color) var(--fill, 0%), var(--track) var(--fill, 0%), var(--track) 100%);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -223,8 +241,15 @@ input[type="range"]::-moz-range-thumb {
 }
 .offer-field input:focus { border-color: var(--accent-border); }
 
-.reset-btn {
+.panel-actions {
   margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.btn-row { display: flex; gap: 8px; }
+.btn-row .btn { flex: 1; }
+.btn {
   width: 100%;
   background: var(--tile);
   border: 1px solid var(--border);
@@ -237,7 +262,22 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   transition: all .15s ease;
 }
-.reset-btn:hover { color: var(--text); border-color: var(--accent-border); background: var(--accent-soft); }
+.btn:hover { color: var(--text); border-color: var(--accent-border); background: var(--accent-soft); }
+.btn-primary {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  font-weight: 600;
+}
+.btn-primary:hover { background: rgba(245,165,36,0.16); }
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  padding: 6px;
+}
+.btn-ghost:hover { background: transparent; color: var(--text-dim); border-color: transparent; }
 
 /* ---------------- RESULTS ---------------- */
 .results { display: flex; flex-direction: column; gap: 18px; }
@@ -257,6 +297,45 @@ input[type="range"]::-moz-range-thumb {
 .status-icon { font-size: 13px; }
 
 .card { padding: 20px; }
+
+/* ---------------- HOW-TO CARD ---------------- */
+.card-icon.how { background: var(--accent-soft); }
+.howto-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.howto-list li { padding-left: 4px; }
+.howto-list strong { color: var(--text); font-weight: 600; }
+.howto-list em { font-style: normal; color: var(--accent); }
+.ink-pos { color: var(--pos); font-weight: 600; }
+.ink-acc { color: var(--accent); font-weight: 600; }
+
+/* ---------------- TOAST ---------------- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #1c1c20;
+  border: 1px solid var(--accent-border);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 11px 18px;
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 50;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 .metric-grid {
   display: grid;

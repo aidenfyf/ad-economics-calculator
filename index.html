@@ -41,11 +41,33 @@
         </div>
       </div>
 
-      <button class="reset-btn" id="resetBtn">↺ Reset to baseline</button>
+      <div class="panel-actions">
+        <button class="btn btn-primary" id="saveBaselineBtn">📌 Save these as my baseline</button>
+        <div class="btn-row">
+          <button class="btn" id="resetBtn">↺ Reset to baseline</button>
+          <button class="btn" id="shareBtn">🔗 Copy share link</button>
+        </div>
+        <button class="btn btn-ghost" id="defaultsBtn">Restore demo defaults</button>
+      </div>
     </aside>
 
     <!-- ============ RIGHT: RESULTS ============ -->
     <section class="results">
+      <!-- How to use -->
+      <div class="card howto-card">
+        <header class="card-head">
+          <span class="card-icon how">🧭</span>
+          <h2>How to find your growth constraint</h2>
+        </header>
+        <ol class="howto-list">
+          <li><strong>Enter your real numbers.</strong> Set each slider to your current funnel metrics, then hit <em>“Save these as my baseline.”</em></li>
+          <li><strong>Watch Monthly Net Profit.</strong> If it’s red, an ad gets you a client but the unit economics don’t pay — something upstream is the constraint.</li>
+          <li><strong>Find the amber sliders.</strong> A slider glows <span class="ink-pos">green</span> when it hits a healthy target (Show ≥ 70%, Close ≥ 18%, Churn ≤ 10%, CPQBC ≤ $350, Calls &gt; 30). The ones still <span class="ink-acc">amber</span> are your candidates.</li>
+          <li><strong>Solve one at a time.</strong> Drag a single amber slider into its green zone. The one that flips net profit positive — or moves it most — is the constraint to fix first.</li>
+          <li><strong>Check the price.</strong> The <span class="ink-acc">Recommended Price Point</span> shows the monthly price needed to hit your target LGP:CAC at today’s numbers.</li>
+        </ol>
+      </div>
+
       <div class="status-bar" id="statusBar">
         <span class="status-icon">📈</span>
         <span id="statusText">At baseline — adjust sliders to model scenarios</span>
@@ -103,6 +125,7 @@
     </section>
   </main>
 
+  <div class="toast" id="toast"></div>
   <script src="app.js"></script>
 </body>
 </html>
