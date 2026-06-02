@@ -27,7 +27,7 @@
       <ol class="howto-list">
         <li><strong>Set your numbers.</strong> Fill in the Offer &amp; Target fields, then drag each slider to match your agency’s real funnel. Nothing here is assumed; the model only knows what you tell it.</li>
         <li><strong>Read the diagnosis.</strong> The model finds your single biggest constraint, the one lever that lifts your Lifetime Gross Profit to CAC ratio the most.</li>
-        <li><strong>Watch the math.</strong> LGP:CAC is the one metric that matters. Below 10:1 is low for agency offers, 10:1 is healthy, 20:1+ means you can scale spend.</li>
+        <li><strong>Watch the math.</strong> LTGP:CAC is the one metric that matters. Below 10:1 is low for agency offers, 10:1 is healthy, 20:1+ means you can scale spend.</li>
         <li><strong>Solve one lever at a time.</strong> Fix the binding constraint, then chase the next biggest one. There is always a next constraint, even when you are profitable.</li>
         <li><strong>Use the deep dive.</strong> Scenarios rank every lever, Action Plan gives you the play, and Formula shows the math behind each number.</li>
       </ol>
@@ -41,7 +41,7 @@
           <span class="panel-icon">🎯</span>
           <h3>Offer &amp; Target</h3>
         </header>
-        <p class="panel-hint">Start here. Enter your offer, how you collect cash, and the LGP:CAC ratio you’re aiming for.</p>
+        <p class="panel-hint">Start here. Enter your offer, how you collect cash, and the LTGP:CAC ratio you’re aiming for.</p>
         <div class="offer-grid">
           <label class="offer-field">
             <span>Monthly price ($)</span>
@@ -56,7 +56,7 @@
             <input type="number" id="upfrontInput" min="1" max="100" step="5" />
           </label>
           <label class="offer-field">
-            <span>Target LGP:CAC</span>
+            <span>Target LTGP:CAC</span>
             <input type="number" id="targetRatioInput" min="1" step="0.5" />
           </label>
         </div>
@@ -97,12 +97,12 @@
           </header>
           <div class="metric-grid">
             <div class="metric"><span class="m-label">CAC</span><span class="m-value" id="cac">—</span></div>
-            <div class="metric highlight"><span class="m-label">LGP:CAC</span><span class="m-value accent" id="lgpCac">—</span></div>
+            <div class="metric kpi" id="lgpCacTile"><span class="m-label">LTGP:CAC</span><span class="m-value" id="lgpCac">—</span></div>
             <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
-            <div class="metric" id="cashRoasTile"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span><span class="m-sub">target 2x · AOV ÷ CAC</span></div>
+            <div class="metric kpi" id="cashRoasTile"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span><span class="m-sub">target 2x · AOV ÷ CAC</span></div>
             <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
             <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
-            <div class="metric"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
+            <div class="metric kpi" id="grossMarginTile"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
             <div class="metric"><span class="m-label">Profit Margin</span><span class="m-value" id="profitMargin">—</span></div>
           </div>
         </div>
@@ -120,7 +120,7 @@
             <div class="metric"><span class="m-label">Monthly Revenue</span><span class="m-value pos" id="monthlyRevenue">—</span><span class="m-sub">from new clients</span></div>
             <div class="metric"><span class="m-label">Monthly COGS</span><span class="m-value" id="monthlyCogs">—</span><span class="m-sub">delivery costs</span></div>
             <div class="metric profit-tile" id="netProfitTile"><span class="m-label">Monthly Net Profit</span><span class="m-value" id="netProfit">—</span><span class="m-sub">revenue minus COGS minus ad spend</span></div>
-            <div class="metric roas-tile"><span class="m-label">Monthly ROAS</span><span class="m-value accent" id="monthlyRoas">—</span><span class="m-sub">revenue divided by ad spend</span></div>
+            <div class="metric kpi" id="monthlyRoasTile"><span class="m-label">Monthly ROAS</span><span class="m-value" id="monthlyRoas">—</span><span class="m-sub">revenue divided by ad spend</span></div>
           </div>
         </div>
 
@@ -133,7 +133,7 @@
           </div>
 
           <div class="tab-panel active" id="panel-scenarios">
-            <p class="panel-intro">Each row moves <em>one</em> lever to its target, holding everything else fixed. The biggest LGP:CAC lift is your constraint. Whichever you fix, then chase the next.</p>
+            <p class="panel-intro">Each row moves <em>one</em> lever to its target, holding everything else fixed. The biggest LTGP:CAC lift is your constraint. Whichever you fix, then chase the next.</p>
             <div class="scenario-table" id="scenarioTable"></div>
           </div>
 
@@ -157,7 +157,7 @@
             <span class="card-icon rec">📈</span>
             <h2>Recommended Price Point</h2>
           </header>
-          <p class="rec-desc">Minimum monthly price to achieve a <strong id="targetLabel">10:1</strong> LGP:CAC ratio at your current slider values:</p>
+          <p class="rec-desc">Minimum monthly price to achieve a <strong id="targetLabel">10:1</strong> LTGP:CAC ratio at your current slider values:</p>
           <div class="rec-price"><span id="recPrice">—</span><span class="rec-unit">/month</span></div>
           <p class="rec-current">Your price: <strong id="currentPriceLabel">—</strong> <span class="rec-flag" id="recFlag"></span></p>
         </div>

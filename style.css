@@ -504,9 +504,17 @@ input[type="range"]::-moz-range-thumb {
 .chip-k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); }
 .chip-v { font-family: var(--mono); font-size: 14px; font-weight: 500; }
 
-/* ---------------- CASH ROAS WARN ---------------- */
-.metric.warn { border-color: var(--accent-border); }
-.metric.warn .m-value { color: var(--accent); }
+/* ---------------- KPI TILES (green when target met, amber when not) ---------------- */
+.metric.kpi.is-good {
+  background: rgba(52,211,153,0.07);
+  border-color: rgba(52,211,153,0.28);
+}
+.metric.kpi.is-good .m-value { color: var(--pos); }
+.metric.kpi.is-bad {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+.metric.kpi.is-bad .m-value { color: var(--accent); }
 
 /* ---------------- DEEP DIVE / TABS ---------------- */
 .deep-dive { padding: 0; overflow: hidden; }

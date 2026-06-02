@@ -2,7 +2,7 @@
    Ad Constraint Calculator — AI Agency Ad Economics
    One metric matters: Lifetime Gross Profit to CAC.
    Six levers move it. The engine finds the single lever whose
-   move-to-target lifts LGP:CAC most — that's your constraint.
+   move-to-target lifts LTGP:CAC most — that's your constraint.
    Diagnosis + playbooks distilled from the profit-first
    growth-partner framework. Rule-based, math-only.
    ============================================================ */
@@ -99,7 +99,7 @@ const compute = () => computeFrom(state, OFFER);
 // ============================================================
 //  DIAGNOSIS ENGINE
 //  Each lever has a target move (KPI benchmark or relative).
-//  The binding constraint = the lever whose move lifts LGP:CAC
+//  The binding constraint = the lever whose move lifts LTGP:CAC
 //  the most. "Always chase the next constraint."
 // ============================================================
 const round5 = n => Math.round(n / 5) * 5;
@@ -145,12 +145,12 @@ function diagnose() {
 function bottleneckText(key, r, top) {
   const cac = usd(r.cac), lgpcac = ratio(r.lgpCac), proj = top ? ratio(top.projected) : '';
   switch (key) {
-    case 'cpqbc':     return `Your acquisition is too expensive. At ${usd(state.cpqbc)} per booked call, CAC sits at ${cac}. Cheaper qualified calls is your fastest lever: drop CPQBC and LGP:CAC moves ${lgpcac} to ${proj}.`;
-    case 'showRate':  return `You pay for booked calls, then lose them before they happen. A ${state.showRate}% show rate inflates your real cost per live call. Lift show to 70% and LGP:CAC moves ${lgpcac} to ${proj}.`;
-    case 'closeRate': return `Your ads work and calls show. The sales process is where the money leaks. A ${state.closeRate}% close rate keeps CAC at ${cac}. Get close to 25% and LGP:CAC moves ${lgpcac} to ${proj}.`;
-    case 'price':     return `You are undercharging for the CAC you carry. At ${usd(OFFER.price)}/mo your LGP:CAC is ${lgpcac}. Raising price drops straight to lifetime profit. Push it 25% and LGP:CAC moves to ${proj}.`;
-    case 'cogs':      return `Your back end leaks profit. It costs ${usd(state.cogs)}/mo to deliver, so margin is thin. Cut cost-to-fulfill without dropping quality and LGP:CAC moves ${lgpcac} to ${proj}.`;
-    case 'churnRate': return `Acquisition may be fine, but clients leave too fast. ${state.churnRate}% monthly churn means only ${num1(r.retention)} months of lifetime. Get churn to 10% and LGP:CAC moves ${lgpcac} to ${proj}.`;
+    case 'cpqbc':     return `Your acquisition is too expensive. At ${usd(state.cpqbc)} per booked call, CAC sits at ${cac}. Cheaper qualified calls is your fastest lever: drop CPQBC and LTGP:CAC moves ${lgpcac} to ${proj}.`;
+    case 'showRate':  return `You pay for booked calls, then lose them before they happen. A ${state.showRate}% show rate inflates your real cost per live call. Lift show to 70% and LTGP:CAC moves ${lgpcac} to ${proj}.`;
+    case 'closeRate': return `Your ads work and calls show. The sales process is where the money leaks. A ${state.closeRate}% close rate keeps CAC at ${cac}. Get close to 25% and LTGP:CAC moves ${lgpcac} to ${proj}.`;
+    case 'price':     return `You are undercharging for the CAC you carry. At ${usd(OFFER.price)}/mo your LTGP:CAC is ${lgpcac}. Raising price drops straight to lifetime profit. Push it 25% and LTGP:CAC moves to ${proj}.`;
+    case 'cogs':      return `Your back end leaks profit. It costs ${usd(state.cogs)}/mo to deliver, so margin is thin. Cut cost-to-fulfill without dropping quality and LTGP:CAC moves ${lgpcac} to ${proj}.`;
+    case 'churnRate': return `Acquisition may be fine, but clients leave too fast. ${state.churnRate}% monthly churn means only ${num1(r.retention)} months of lifetime. Get churn to 10% and LTGP:CAC moves ${lgpcac} to ${proj}.`;
     case 'scale':     return `Your unit economics are already strong at ${lgpcac}, above your ${OFFER.targetRatio}:1 target. The constraint is no longer profit, it's volume. Scale spend without breaking conversion, and keep chasing the next constraint.`;
     default:          return '';
   }
@@ -174,7 +174,7 @@ const PLAYBOOKS = {
     { what: 'Tighten the call-out.', how: 'Get specific on who you target (niche + revenue + situation) until the addressable market is about 30 to 50k, no smaller.', out: 'More qualified, cheaper calls. (Benchmark: about $100 unsaturated, $250 to $300 saturated.)' },
   ],
   price: [
-    { what: 'Raise the price.', how: 'Keep the exact same sales process, just state the higher number. If you can charge X you can usually charge 1.25 to 2x it.', out: 'LGP:CAC jumps with no change to ads, funnel, or offer.' },
+    { what: 'Raise the price.', how: 'Keep the exact same sales process, just state the higher number. If you can charge X you can usually charge 1.25 to 2x it.', out: 'LTGP:CAC jumps with no change to ads, funnel, or offer.' },
     { what: 'Raise AOV via commitment.', how: 'Pitch a 3 to 4 month commitment collected (partly) upfront instead of month-to-month.', out: 'Day-one cash ROAS toward 2x, so CAC is recouped faster.' },
     { what: 'Roll it out properly.', how: 'Apply new pricing to new clients first; grandfather or stagger existing ones.', out: 'Higher margin without a churn spike.' },
   ],
@@ -186,7 +186,7 @@ const PLAYBOOKS = {
   churnRate: [
     { what: 'Engineer a fast first win.', how: 'Define a first-win milestone and drive every new client to it in the first weeks.', out: 'Churn toward 10% (ideal 5%).' },
     { what: 'Install health scoring + a weekly cadence.', how: 'Score accounts, run a weekly check-in, and catch at-risk clients before they leave.', out: 'Longer retention = higher LTV.' },
-    { what: 'Then raise price.', how: 'Once retention improves, test a price increase. A small churn drop can let CAC double safely.', out: 'LGP compounds.' },
+    { what: 'Then raise price.', how: 'Once retention improves, test a price increase. A small churn drop can let CAC double safely.', out: 'LTGP compounds.' },
   ],
   scale: [
     { what: 'Scale ad spend in steps.', how: 'Increase budget incrementally; expect CAC to rise ~30% per doubling but profit still compounds.', out: 'More clients at still-healthy economics.' },
@@ -205,7 +205,7 @@ function formulaRows(r) {
     ['Lifetime Gross Profit', '(Price − COGS) × Retention', usd(r.lgp)],
     ['AOV (upfront cash)', 'Price × Contract Months × Upfront %', usd(r.aov)],
     ['Day-One Cash ROAS', 'AOV ÷ CAC', x2(r.dayOneRoas)],
-    ['LGP : CAC', 'Lifetime Gross Profit ÷ CAC', ratio(r.lgpCac)],
+    ['LTGP : CAC', 'Lifetime Gross Profit ÷ CAC', ratio(r.lgpCac)],
     ['Recommended Price', '(Target × CAC ÷ Retention) + COGS', usd(r.recPrice)],
   ];
 }
@@ -291,6 +291,12 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
 // ============================================================
 //  RENDER
 // ============================================================
+function kpiTone(id, good) {
+  const el = document.getElementById(id);
+  el.classList.toggle('is-good', good);
+  el.classList.toggle('is-bad', !good);
+}
+
 function render() {
   const r = compute();
   const set = (id, v) => (document.getElementById(id).textContent = v);
@@ -300,11 +306,16 @@ function render() {
   set('lgpCac', r.lgpCac > 0 ? ratio(r.lgpCac) : '—');
   set('retention', num1(r.retention) + ' mo');
   set('dayOneRoas', x2(r.dayOneRoas));
-  document.getElementById('cashRoasTile').classList.toggle('warn', r.dayOneRoas < 2);
   set('lgp', usd(r.lgp));
   set('profitPerClient', usd(r.profitPerClient));
   set('grossMargin', pct(r.grossMargin * 100));
   set('profitMargin', pct(r.profitMargin * 100));
+
+  // KPI tiles glow green once they clear their target, amber when they don't.
+  kpiTone('lgpCacTile',      r.lgpCac    >= OFFER.targetRatio);  // target ratio (e.g. 10:1)
+  kpiTone('cashRoasTile',    r.dayOneRoas >= 2);                 // 2x cash ROAS
+  kpiTone('grossMarginTile', r.grossMargin >= 0.80);             // 80% gross margin
+  kpiTone('monthlyRoasTile', r.monthlyRoas >= 2);                // 2x monthly ROAS
 
   // projection
   set('newClients', num1(r.clients));
@@ -355,7 +366,7 @@ function renderDiagnosis(r) {
   // impact chips
   const impact = document.getElementById('diagImpact');
   const chips = [
-    ['LGP:CAC now', ratio(d.base)],
+    ['LTGP:CAC now', ratio(d.base)],
     ['Target', `${(+OFFER.targetRatio).toFixed(0)}:1`],
     ['Day-one cash ROAS', x2(r.dayOneRoas) + (r.dayOneRoas < 2 ? ' (target 2x)' : '')],
   ];
