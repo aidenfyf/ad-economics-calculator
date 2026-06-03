@@ -1,27 +1,40 @@
 :root {
-  --bg: #0a0a0b;
-  --panel: #0e0e10;
-  --card: #121214;
-  --tile: #161618;
-  --tile-2: #131315;
-  --border: #232327;
-  --border-soft: #1b1b1f;
-  --text: #f4f4f5;
-  --text-dim: #8a8a93;
-  --text-faint: #5c5c66;
-  --accent: #f5a524;       /* amber */
-  --accent-soft: #2a2010;
-  --accent-border: #4a3a16;
-  --pos: #34d399;          /* green */
-  --neg: #f87171;          /* red */
-  --neg-soft: #2a1414;
-  --neg-border: #45211f;
-  --track: #232327;
-  --thumb: #f5f0e6;
-  --radius: 14px;
-  --radius-sm: 10px;
-  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Warm-tinted dark neutrals — every surface leans toward the amber hue (~80) */
+  --bg:          oklch(0.176 0.006 80);
+  --panel:       oklch(0.198 0.007 80);
+  --card:        oklch(0.208 0.0075 80);
+  --tile:        oklch(0.238 0.008 80);
+  --tile-2:      oklch(0.226 0.008 80);
+  --border:      oklch(0.330 0.012 80);
+  --border-soft: oklch(0.268 0.010 80);
+  --text:        oklch(0.965 0.006 85);
+  --text-dim:    oklch(0.745 0.013 82);
+  --text-faint:  oklch(0.560 0.012 80);
+
+  --accent:        oklch(0.820 0.135 78);   /* signature warm gold-amber */
+  --accent-soft:   oklch(0.305 0.052 78);
+  --accent-border: oklch(0.460 0.080 78);
+
+  --pos:        oklch(0.800 0.140 158);     /* healthy green */
+  --pos-soft:   oklch(0.300 0.055 158);
+  --pos-border: oklch(0.430 0.080 158);
+  --neg:        oklch(0.700 0.170 25);      /* profit leak red */
+  --neg-soft:   oklch(0.300 0.070 25);
+  --neg-border: oklch(0.450 0.100 25);
+
+  --track: oklch(0.300 0.010 80);
+  --thumb: oklch(0.975 0.012 85);
+
+  --radius:    16px;
+  --radius-sm: 11px;
+
+  --font-display: 'Bricolage Grotesque', 'Hanken Grotesk', sans-serif;
+  --sans:         'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --mono:         'Spline Sans Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* 4pt spacing scale, semantic */
+  --space-2xs: 4px;  --space-xs: 8px;   --space-sm: 12px; --space-md: 16px;
+  --space-lg: 24px;  --space-xl: 32px;  --space-2xl: 48px; --space-3xl: 64px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,15 +44,18 @@ html, body {
   color: var(--text);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
-  font-feature-settings: "tnum" 1;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "tnum" 1, "cv05" 1;
 }
 
 body {
   background:
-    radial-gradient(1200px 600px at 78% -10%, rgba(245,165,36,0.06), transparent 60%),
+    radial-gradient(1100px 560px at 82% -12%, color-mix(in oklch, var(--accent) 9%, transparent), transparent 62%),
     var(--bg);
   min-height: 100vh;
 }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
 /* page wrapper: caps width so the layout never stretches edge-to-edge */
 .page {
@@ -50,29 +66,39 @@ body {
 
 /* ---------------- HERO ---------------- */
 .hero {
-  text-align: center;
-  padding: 56px 0 32px;
+  padding: clamp(40px, 7vw, 76px) 0 clamp(26px, 4vw, 40px);
+}
+.hero-kicker {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
 }
 .hero h1 {
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: -0.6px;
-  line-height: 1.1;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5.4vw, 3.55rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  max-width: 16ch;
 }
 .hero-sub {
-  margin: 12px auto 0;
-  max-width: 560px;
-  font-size: 15px;
-  line-height: 1.5;
+  margin-top: 18px;
+  max-width: 54ch;
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  line-height: 1.55;
   color: var(--text-dim);
 }
 
 .app {
   display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 18px;
+  grid-template-columns: 366px 1fr;
+  gap: 20px;
   align-items: start;
-  margin-top: 18px;
+  margin-top: clamp(20px, 3vw, 32px);
 }
 
 /* ---------------- PANELS / CARDS ---------------- */
@@ -83,7 +109,7 @@ body {
 }
 
 .controls-panel {
-  padding: 22px 20px;
+  padding: var(--space-lg) var(--space-lg);
   background: var(--panel);
 }
 
@@ -91,14 +117,15 @@ body {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-md);
 }
-.card-head { margin-bottom: 18px; }
+.card-head { margin-bottom: var(--space-lg); }
 
 .panel-head h1, .panel-head h3, .card-head h2 {
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: -0.01em;
 }
 
 .panel-hint {
@@ -303,7 +330,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--accent);
   font-weight: 600;
 }
-.btn-primary:hover { background: rgba(245,165,36,0.16); }
+.btn-primary:hover { background: color-mix(in oklch, var(--accent) 16%, transparent); }
 .btn-ghost {
   background: transparent;
   border-color: transparent;
@@ -356,7 +383,7 @@ input[type="range"]::-moz-range-thumb {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%) translateY(16px);
-  background: #1c1c20;
+  background: var(--tile);
   border: 1px solid var(--accent-border);
   color: var(--text);
   font-size: 13px;
@@ -385,19 +412,22 @@ input[type="range"]::-moz-range-thumb {
   flex-direction: column;
   gap: 6px;
   min-height: 78px;
+  transition: background-color .3s ease, border-color .3s ease;
 }
 .m-label {
   font-size: 10.5px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.08em;
   color: var(--text-dim);
 }
 .m-value {
   font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
   font-size: 22px;
   font-weight: 500;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.01em;
   line-height: 1.05;
+  transition: color .3s ease;
 }
 .m-value.accent { color: var(--accent); }
 .m-value.pos { color: var(--pos); }
@@ -417,13 +447,13 @@ input[type="range"]::-moz-range-thumb {
   border-color: var(--neg-border);
 }
 .metric.profit-tile.is-pos {
-  background: rgba(52,211,153,0.06);
-  border-color: rgba(52,211,153,0.22);
+  background: color-mix(in oklch, var(--pos) 7%, transparent);
+  border-color: color-mix(in oklch, var(--pos) 24%, transparent);
 }
 
 /* ---------------- RECOMMENDED PRICE ---------------- */
 .rec-card {
-  background: linear-gradient(135deg, rgba(245,165,36,0.08), rgba(245,165,36,0.02));
+  background: linear-gradient(135deg, color-mix(in oklch, var(--accent) 9%, transparent), color-mix(in oklch, var(--accent) 2.5%, transparent));
   border: 1px solid var(--accent-border);
 }
 .rec-desc {
@@ -480,21 +510,28 @@ input[type="range"]::-moz-range-thumb {
 
 /* ---------------- DIAGNOSIS CARD ---------------- */
 .diagnosis-card {
-  background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(248,113,113,0.02));
+  background: linear-gradient(135deg, color-mix(in oklch, var(--neg) 11%, transparent), color-mix(in oklch, var(--neg) 2.5%, transparent));
   border: 1px solid var(--neg-border);
 }
 .diagnosis-card.is-healthy {
-  background: linear-gradient(135deg, rgba(52,211,153,0.10), rgba(52,211,153,0.02));
-  border-color: rgba(52,211,153,0.30);
+  background: linear-gradient(135deg, color-mix(in oklch, var(--pos) 11%, transparent), color-mix(in oklch, var(--pos) 2.5%, transparent));
+  border-color: color-mix(in oklch, var(--pos) 32%, transparent);
 }
-.diag-head { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px; }
+.diag-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
 .diag-eyebrow {
-  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.8px;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.13em;
   color: var(--neg); font-weight: 600;
 }
 .is-healthy .diag-eyebrow { color: var(--pos); }
-.diag-name { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-.diag-bottleneck { font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 16px; }
+.diag-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700; letter-spacing: -0.025em; line-height: 1.05;
+}
+.diag-bottleneck {
+  font-size: 14px; line-height: 1.55; color: var(--text);
+  margin-bottom: 18px; max-width: 64ch;
+}
 .diag-impact { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   display: flex; flex-direction: column; gap: 2px;
@@ -506,8 +543,8 @@ input[type="range"]::-moz-range-thumb {
 
 /* ---------------- KPI TILES (green when target met, amber when not) ---------------- */
 .metric.kpi.is-good {
-  background: rgba(52,211,153,0.07);
-  border-color: rgba(52,211,153,0.28);
+  background: color-mix(in oklch, var(--pos) 8%, transparent);
+  border-color: color-mix(in oklch, var(--pos) 28%, transparent);
 }
 .metric.kpi.is-good .m-value { color: var(--pos); }
 .metric.kpi.is-bad {
@@ -553,7 +590,7 @@ input[type="range"]::-moz-range-thumb {
 /* ---------------- ACTION PLAN ---------------- */
 .action-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 16px; }
 .action-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-faint); }
-.action-name { font-size: 16px; font-weight: 700; color: var(--accent); }
+.action-name { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--accent); }
 .action-steps { display: flex; flex-direction: column; gap: 12px; }
 .step { display: flex; gap: 12px; background: var(--tile-2); border: 1px solid var(--border-soft); border-radius: 10px; padding: 14px; }
 .step-n {
@@ -585,4 +622,25 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 600px) {
   .frm-row { grid-template-columns: 1fr auto; }
   .frm-eq { display: none; }
+}
+
+/* ---------------- MOTION: one orchestrated load-in ---------------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero, .howto-card, .app {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hero       { animation-delay: 0.02s; }
+.howto-card { animation-delay: 0.10s; }
+.app        { animation-delay: 0.18s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
