@@ -97,6 +97,8 @@
             <div class="metric kpi" id="lgpCacTile"><span class="m-label">LTGP:CAC</span><span class="m-value" id="lgpCac">—</span></div>
             <div class="metric"><span class="m-label">Avg. Retention</span><span class="m-value" id="retention">—</span></div>
             <div class="metric kpi" id="cashRoasTile"><span class="m-label">Day-One Cash ROAS</span><span class="m-value" id="dayOneRoas">—</span><span class="m-sub">target 2x · AOV ÷ CAC</span></div>
+            <div class="metric kpi" id="cacPaybackTile"><span class="m-label">CAC Payback</span><span class="m-value" id="cacPayback">—</span><span class="m-sub" id="paybackSub">months of client gross profit to repay CAC</span></div>
+            <div class="metric"><span class="m-label">Lifetime Value</span><span class="m-value" id="lifetimeValue">—</span><span class="m-sub">price × retention</span></div>
             <div class="metric"><span class="m-label">Lifetime Gross Profit</span><span class="m-value" id="lgp">—</span></div>
             <div class="metric"><span class="m-label">Profit Per Client</span><span class="m-value" id="profitPerClient">—</span></div>
             <div class="metric kpi" id="grossMarginTile"><span class="m-label">Gross Margin</span><span class="m-value" id="grossMargin">—</span></div>
@@ -104,20 +106,24 @@
           </div>
         </div>
 
-        <!-- Monthly Revenue Projection -->
+        <!-- Cash and Profit Projection -->
         <div class="card">
           <header class="card-head">
-            <h2>Monthly Revenue Projection</h2>
+            <h2>Cash &amp; Profit Projection</h2>
             <span class="card-tag" id="callsTag">booked calls/mo</span>
           </header>
           <div class="metric-grid">
             <div class="metric"><span class="m-label">New Clients Won</span><span class="m-value" id="newClients">—</span><span class="m-sub">per month</span></div>
             <div class="metric"><span class="m-label">Total Ad Spend</span><span class="m-value" id="adSpend">—</span><span class="m-sub">per month</span></div>
-            <div class="metric"><span class="m-label">Monthly Revenue</span><span class="m-value pos" id="monthlyRevenue">—</span><span class="m-sub">from new clients</span></div>
-            <div class="metric"><span class="m-label">Monthly COGS</span><span class="m-value" id="monthlyCogs">—</span><span class="m-sub">delivery costs</span></div>
-            <div class="metric profit-tile" id="netProfitTile"><span class="m-label">Monthly Net Profit</span><span class="m-value" id="netProfit">—</span><span class="m-sub">revenue minus COGS minus ad spend</span></div>
-            <div class="metric kpi" id="monthlyRoasTile"><span class="m-label">Monthly ROAS</span><span class="m-value" id="monthlyRoas">—</span><span class="m-sub">revenue divided by ad spend</span></div>
+            <div class="metric"><span class="m-label">Steady-State Clients</span><span class="m-value" id="steadyClients">—</span><span class="m-sub">active base once wins and churn balance</span></div>
+            <div class="metric"><span class="m-label">Steady-State Revenue</span><span class="m-value pos" id="steadyRevenue">—</span><span class="m-sub" id="steadyRoasSub">per month</span></div>
+            <div class="metric profit-tile" id="steadyNetTile"><span class="m-label">Steady-State Monthly Profit</span><span class="m-value" id="steadyNet">—</span><span class="m-sub">revenue minus COGS minus ad spend, at a stable base</span></div>
+            <div class="metric profit-tile" id="maxDipTile"><span class="m-label">Max Cash Dip</span><span class="m-value" id="maxDip">—</span><span class="m-sub" id="dipSub">deepest cash position while ramping</span></div>
           </div>
+          <p class="proj-note">Two different questions. <strong>Steady-state profit</strong> answers whether the
+          business works. <strong>Max cash dip</strong> answers whether you can afford to get there, because
+          you pay for ads from month one and the client base takes time to compound. Both assume you start
+          from zero clients and hold these inputs steady.</p>
         </div>
 
         <!-- DEEP DIVE -->

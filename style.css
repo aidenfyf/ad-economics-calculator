@@ -10,6 +10,10 @@
   --text:        oklch(0.965 0.006 85);
   --text-dim:    oklch(0.745 0.013 82);
   --text-faint:  oklch(0.560 0.012 80);
+  --text-sub:    oklch(0.680 0.013 82);  /* tile sub-lines. Binding constraint is the
+                                            opaque amber .kpi.is-bad tile: 0.660 measured
+                                            4.37:1 there, 0.680 gives 4.71:1. Stays 0.065 L
+                                            below --text-dim so the label/sub tier holds. */
 
   --accent:        oklch(0.820 0.135 78);   /* signature warm gold-amber */
   --accent-soft:   oklch(0.305 0.052 78);
@@ -341,7 +345,10 @@ input[type="range"]::-moz-range-thumb {
 .btn-ghost:hover { background: transparent; color: var(--text-dim); border-color: transparent; }
 
 /* ---------------- RESULTS ---------------- */
-.results { display: flex; flex-direction: column; gap: 18px; }
+/* min-width:0 lets this grid child shrink below its content's intrinsic width.
+   Without it the deep-dive card forces the whole page ~440px wide and the
+   viewport scrolls sideways on phones. */
+.results { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 
 .status-bar {
   display: flex;
@@ -432,7 +439,10 @@ input[type="range"]::-moz-range-thumb {
 .m-value.accent { color: var(--accent); }
 .m-value.pos { color: var(--pos); }
 .m-value.neg { color: var(--neg); }
-.m-sub { font-size: 10.5px; color: var(--text-faint); margin-top: -1px; }
+/* --text-faint measured 3.81:1, under WCAG AA. --text-dim clears it but lands on
+   the same value as .m-label, flattening the tier inside a tile. This sits
+   between them: ~5.2:1, still clear of AA, hierarchy intact. */
+.m-sub { font-size: 10.5px; color: var(--text-sub); margin-top: -1px; }
 
 .metric.highlight {
   background: var(--accent-soft);
@@ -644,3 +654,14 @@ input[type="range"]::-moz-range-thumb {
     scroll-behavior: auto !important;
   }
 }
+
+/* Explainer under the cash & profit grid: why there are two headline numbers. */
+.proj-note {
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim, #8b93a7);
+}
+.proj-note strong { color: var(--text, #e6e9ef); font-weight: 600; }

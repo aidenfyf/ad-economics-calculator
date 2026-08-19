@@ -53,11 +53,19 @@ function loadFromUrl() {
 const clamp = (s, v) => Math.min(s.max, Math.max(s.min, v));
 
 // ---------------- formatting ----------------
-const usd  = n => '$' + Math.round(n).toLocaleString('en-US');
-const pct  = n => n.toFixed(1) + '%';
-const num1 = n => n.toFixed(1);
-const x2   = n => n.toFixed(2) + 'x';
-const ratio = n => n.toFixed(1) + ':1';
+// Every formatter guards non-finite input. CAC is deliberately Infinity when the
+// funnel converts nobody, which propagates into profitPerClient and profitMargin;
+// without these guards the page renders "$-\u221e" and "-Infinity%".
+// Sign goes before the currency symbol: -$5,000, never $-5,000.
+const usd  = n => { if (!isFinite(n)) return '\u2014'; const v = Math.round(n);
+                    return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US'); };
+const pct  = n => isFinite(n) ? n.toFixed(1) + '%' : '\u2014';
+const num1 = n => isFinite(n) ? n.toFixed(1) : '\u2014';
+// Counts that round to 0.0 but are not actually zero. Same "<0.1" convention
+// used by CAC Payback, so a non-zero value never reads as nothing.
+const num1Min = n => !isFinite(n) ? '\u2014' : (n > 0 && n < 0.05) ? '<0.1' : n.toFixed(1);
+const x2   = n => isFinite(n) ? n.toFixed(2) + 'x' : '\u2014';
+const ratio = n => isFinite(n) ? n.toFixed(1) + ':1' : '\u2014';
 const fmtSlider = (s, v) => s.fmt === 'usd' ? usd(v) : s.fmt === 'pct' ? v + '%' : String(v);
 
 // ============================================================
@@ -77,10 +85,11 @@ function computeFrom(st, of) {
   const aov           = contractValue * (of.upfront / 100);
   const dayOneRoas    = isFinite(cac) && cac > 0 ? aov / cac : 0;
 
-  const monthlyRevenue = clients * of.price;
-  const monthlyCogs    = clients * st.cogs;
-  const netProfit      = monthlyRevenue - monthlyCogs - adSpend;
-  const monthlyRoas    = adSpend > 0 ? monthlyRevenue / adSpend : 0;
+  // NOTE: there used to be a `netProfit` here computed as
+  // (new clients this month x price) - COGS - a full month of ad spend.
+  // That compared one cohort's first month against the whole period's cost and
+  // ignored the existing client base, so it reported a loss for businesses that
+  // are plainly profitable. Superseded by steadyNet and the cash curve below.
 
   const lifetimeRevenue = of.price * retention;
   const lgp             = (of.price - st.cogs) * retention;
@@ -90,9 +99,37 @@ function computeFrom(st, of) {
   const lgpCac          = isFinite(cac) && cac > 0 ? lgp / cac : 0;
   const recPrice        = of.targetRatio * cac / retention + st.cogs;
 
+  // ---- Steady state -------------------------------------------------------
+  // The client base stops growing when new clients per month equal churned
+  // clients per month, i.e. at clients/churn active accounts. Cross-checks
+  // exactly against profitPerClient * clients.
+  const gpPerClientMonth = of.price - st.cogs;
+  const steadyClients    = churn > 0 ? clients / churn : Infinity;
+  const steadyRevenue    = steadyClients * of.price;
+  const steadyCogs       = steadyClients * st.cogs;
+  const steadyNet        = steadyRevenue - steadyCogs - adSpend;
+  const steadyRoas       = adSpend > 0 ? steadyRevenue / adSpend : 0;
+
+  // Months of client gross profit needed to repay one CAC.
+  const cacPayback = gpPerClientMonth > 0 && isFinite(cac) ? cac / gpPerClientMonth : Infinity;
+
+  // ---- Cash curve ---------------------------------------------------------
+  // Ramp from a standing start: acquire `clients` a month, lose `churn` of the
+  // base each month, pay `adSpend` every month. Gives the depth of the hole and
+  // the month cumulative cash turns positive.
+  const HORIZON = 120;
+  let active = 0, cum = 0, maxDip = 0, dipMonth = 0, breakEvenMonth = null;
+  for (let m = 1; m <= HORIZON; m++) {
+    active = active * (1 - churn) + clients;
+    cum += active * gpPerClientMonth - adSpend;
+    if (cum < maxDip) { maxDip = cum; dipMonth = m; }
+    if (breakEvenMonth === null && cum >= 0) breakEvenMonth = m;
+  }
+
   return { cac, lgpCac, retention, aov, dayOneRoas, lgp, profitPerClient, grossMargin,
-           profitMargin, clients, adSpend, monthlyRevenue, monthlyCogs, netProfit,
-           monthlyRoas, recPrice, contractValue };
+           profitMargin, clients, adSpend, recPrice, contractValue,
+           gpPerClientMonth, steadyClients, steadyRevenue, steadyCogs, steadyNet,
+           steadyRoas, cacPayback, maxDip, dipMonth, breakEvenMonth };
 }
 const compute = () => computeFrom(state, OFFER);
 
@@ -306,6 +343,7 @@ function render() {
   set('lgpCac', r.lgpCac > 0 ? ratio(r.lgpCac) : '—');
   set('retention', num1(r.retention) + ' mo');
   set('dayOneRoas', x2(r.dayOneRoas));
+  set('lifetimeValue', usd(OFFER.price * r.retention));
   set('lgp', usd(r.lgp));
   set('profitPerClient', usd(r.profitPerClient));
   set('grossMargin', pct(r.grossMargin * 100));
@@ -315,22 +353,61 @@ function render() {
   kpiTone('lgpCacTile',      r.lgpCac    >= OFFER.targetRatio);  // target ratio (e.g. 10:1)
   kpiTone('cashRoasTile',    r.dayOneRoas >= 2);                 // 2x cash ROAS
   kpiTone('grossMarginTile', r.grossMargin >= 0.80);             // 80% gross margin
-  kpiTone('monthlyRoasTile', r.monthlyRoas >= 2);                // 2x monthly ROAS
+  // Payback is healthy when CAC repays inside 3 months AND well inside the
+  // average client lifetime. Fast payback against a short lifetime is not a win.
+  kpiTone('cacPaybackTile',  isFinite(r.cacPayback) && r.cacPayback <= 3 && r.cacPayback < r.retention);
+
+  // ---- signed currency, so a negative reads as -$1,234 not $-1,234 ----
+  // Tone is derived from the ROUNDED value, so the colour always agrees with the
+  // digits on screen: a -0.0000001 prints "$0" and reads as positive, and a
+  // printed minus sign is never painted green.
+  const signedUsd = usd;
+  const paintProfit = (tileId, valueId, value, text) => {
+    const v = Math.round(value);
+    const good = isFinite(v) && v >= 0;
+    const el = document.getElementById(valueId);
+    el.textContent = text !== undefined ? text : usd(value);
+    el.classList.toggle('neg', !good);
+    el.classList.toggle('pos', good);
+    const t = document.getElementById(tileId);
+    t.classList.toggle('is-neg', !good);
+    t.classList.toggle('is-pos', good);
+  };
 
   // projection
-  set('newClients', num1(r.clients));
+  set('newClients', num1Min(r.clients));
   set('adSpend', usd(r.adSpend));
-  set('monthlyRevenue', usd(r.monthlyRevenue));
-  set('monthlyCogs', usd(r.monthlyCogs));
-  set('monthlyRoas', x2(r.monthlyRoas));
+  set('steadyClients', num1Min(r.steadyClients));
+  set('steadyRevenue', isFinite(r.steadyRevenue) ? usd(r.steadyRevenue) : '—');
+  set('steadyRoasSub', isFinite(r.steadyRoas) && r.steadyRoas > 0
+        ? `per month · ${x2(r.steadyRoas)} on ad spend` : 'per month');
   set('callsTag', `${state.calls} booked calls/mo`);
-  const netEl = document.getElementById('netProfit');
-  netEl.textContent = (r.netProfit < 0 ? '-$' : '$') + Math.abs(Math.round(r.netProfit)).toLocaleString('en-US');
-  netEl.classList.toggle('neg', r.netProfit < 0);
-  netEl.classList.toggle('pos', r.netProfit >= 0);
-  const tile = document.getElementById('netProfitTile');
-  tile.classList.toggle('is-neg', r.netProfit < 0);
-  tile.classList.toggle('is-pos', r.netProfit >= 0);
+
+  paintProfit('steadyNetTile', 'steadyNet',
+              isFinite(r.steadyNet) ? r.steadyNet : -1,
+              isFinite(r.steadyNet) ? undefined : '\u2014');
+
+  // Max cash dip is a cost, so it is only ever zero or negative. It reads as
+  // healthy when the hole is repaid, not when it is absent.
+  if (r.breakEvenMonth === null) {
+    // The cumulative figure here would just be the 120-month horizon total, an
+    // artefact of where the loop stops rather than a real depth. Do not show it.
+    paintProfit('maxDipTile', 'maxDip', -1, '—');
+    set('dipSub', 'never recovers at these inputs');
+  } else if (Math.round(r.maxDip) === 0) {
+    paintProfit('maxDipTile', 'maxDip', 0, '$0');
+    set('dipSub', 'no cash dip · cash positive from month 1');
+  } else {
+    paintProfit('maxDipTile', 'maxDip', r.maxDip);
+    set('dipSub', `deepest in month ${r.dipMonth} · cumulative cash positive by month ${r.breakEvenMonth}`);
+  }
+
+  // CAC payback
+  set('cacPayback', !isFinite(r.cacPayback) ? '\u2014'
+        : r.cacPayback < 0.05 ? '<0.1 mo' : num1(r.cacPayback) + ' mo');
+  set('paybackSub', isFinite(r.cacPayback)
+        ? `target under 3 mo · client lifetime ${num1(r.retention)} mo`
+        : 'months of client gross profit to repay CAC');
 
   // recommended price
   set('recPrice', isFinite(r.recPrice) ? usd(r.recPrice) : '—');
