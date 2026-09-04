@@ -358,7 +358,7 @@ function render() {
   kpiTone('cacPaybackTile',  isFinite(r.cacPayback) && r.cacPayback <= 3 && r.cacPayback < r.retention);
 
   // ---- signed currency, so a negative reads as -$1,234 not $-1,234 ----
-  // Tone is derived from the ROUNDED value, so the colour always agrees with the
+  // Tone is derived from the ROUNDED value, so the color always agrees with the
   // digits on screen: a -0.0000001 prints "$0" and reads as positive, and a
   // printed minus sign is never painted green.
   const signedUsd = usd;
